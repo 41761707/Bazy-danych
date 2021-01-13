@@ -1,6 +1,6 @@
 package com.zalewskiwojtczak;
 
-public abstract class Person {
+public class Person {
     private String id;
     private String firstname;
     private String lastname;
@@ -10,13 +10,13 @@ public abstract class Person {
     private int phone;
     private String email;
 
-    public Person(String id, String firstname, String lastname, int address, int studentsClass,
+    public Person(String id, String firstname, String lastname, int address, int classOrClassroom,
                    String pesel, int phone, String email){
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.address = address;
-        this.classOrClassroom = studentsClass;
+        this.classOrClassroom = classOrClassroom;
         this.pesel = pesel;
         this.phone = phone;
         this.email = email;
@@ -38,7 +38,7 @@ public abstract class Person {
         return address;
     }
 
-    public int getStudentsClass() {
+    public int getClassOrClassrooms() {
         return classOrClassroom;
     }
 

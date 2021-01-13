@@ -68,12 +68,12 @@ public class searchApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String type = functionTextField.getText();
-                    List<? extends Person> people = null;
+                    List<Person> people = null;
                     if ((people = dziennikDAO.showAll(type)) == null){
                         throw new Exception();
                     }
                     TableModelCreator creator = new TableModelCreator();
-                    PersonTableModel model = creator.getTableModel(type, people);
+                    AbstractPersonTableModel model = creator.getTableModel(type, people);
                     table.setModel(model);
 
                 } catch (Exception exc) {
