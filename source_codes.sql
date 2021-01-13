@@ -16,7 +16,8 @@ CREATE TABLE Uczen (
 	Login varchar(40) NOT NULL,
 	Haslo varchar(50) NOT NULL,
 	PRIMARY KEY(nrLegitymacji),
-	UNIQUE(nrLegitymacji) 
+	UNIQUE(nrLegitymacji) ,
+	UNIQUE(PESEL)
 );
 -- Utworzenie tabeli Nauczyciel
 CREATE TABLE Nauczyciel(
@@ -104,7 +105,7 @@ CREATE TABLE Zachowanie(
 -- Utworzenie tabeli Uwaga
 CREATE TABLE Uwaga(
 	ID_Uwagi int unsigned NOT NULL AUTO_INCREMENT,
-	nrLegitymacjiUcznia varchar(10) NOT NULL,
+	nrLegitymacjiUcznia varchar(11) NOT NULL,
 	ID_Nauczyciela int unsigned NOT NULL,
 	OdjetePunkty int NOT NULL,
 	Komentarz varchar(500),
@@ -203,6 +204,20 @@ UPDATE Klasa SET Liczebnosc=(SELECT Liczebnosc-1 FROM Klasa WHERE ID_Klasy=n) WH
 END $$
 DELIMITER ;
 
+-- podobny lista triggerow dla zachowania
+-- dla insert
+DROP TRIGGER zachowanie_INSERT;
+DELIMITER $$
+CREATE TRIGGER zachowanie_INSERT BEFORE INSERT ON Uwaga
+FOR EACH ROW
+BEGIN
+DECLARE n INT DEFAULT 0;
+DECLARE uczen VARCHAR(11);
+SET n=NEW.OdjetePunkty;
+SET uczen=NEW.nrLegitymacjiUcznia;
+UPDATE Zachowanie SET PunktyZachowania=(SELECT PunktyZachowania+n FROM Zachowanie WHERE nrLegitymacjiUcznia=uczen) WHERE nrLegitymacjiUcznia=uczen;
+END $$
+DELIMITER ;
 -- 2procedura dodajaca ocene do tabeli Oceny
 DROP PROCEDURE IF EXISTS dodaj_ocene;
 DELIMITER $$
@@ -385,11 +400,81 @@ BEGIN
     DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
+-- 13procedura dodająca przedmiot do tabeli Przedmioty
+DROP PROCEDURE IF EXISTS dodaj_przedmiot;
+DELIMITER $$
+CREATE PROCEDURE dodaj_przedmiot(IN nazwa VARCHAR(40))
+BEGIN
+	DECLARE q VARCHAR(200);
+	SET q='INSERT INTO Przedmiot(Nazwa) VALUES (?);';
+	PREPARE stmnt FROM q;
+	EXECUTE stmnt USING Nazwa;
+	DEALLOCATE PREPARE stmnt;
+END $$
+DELIMITER ;
+
+-- 14procedura, ktora dodaje administratora do tabeli Administrator, pomocne w skrypcie generującym dane
+
+DROP PROCEDURE IF EXISTS dodaj_administratora;
+DELIMITER $$
+CREATE PROCEDURE dodaj_administratora(IN Imie VARCHAR(40), IN Nazwisko VARCHAR(40), IN PESEL VARCHAR(11), IN ID_Adresu INT unsigned, IN nrTelefonu VARCHAR(9), IN Email VARCHAR(40),IN Login VARCHAR(40), IN Haslo VARCHAR(50))
+BEGIN
+	DECLARE q VARCHAR(300);
+	DECLARE Hash VARCHAR(160);
+	SET Hash=SHA1(Haslo);
+	IF ((SELECT ID_Adresu) NOT IN (SELECT ID_Adresu FROM Adres)) THEN
+        SELECT 'Brak podanego ID adresu w bazie danych';
+    ELSE
+    	SET q='INSERT INTO Administrator(Imie,Nazwisko,PESEL,ID_Adresu,nrTelefonu,Email,Login,Haslo) VALUES(?,?,?,?,?,?,?,?);';
+    	PREPARE stmnt FROM q;
+    	EXECUTE stmnt USING Imie,Nazwisko,PESEL,ID_Adresu,nrTelefonu,Email,Login,Hash;
+    	DEALLOCATE PREPARE stmnt;
+    END IF;
+END $$
+DELIMITER ;
+
+-- 15procedura, ktora dodaje zachowanie, pomocne w skrypcie
+
+DROP PROCEDURE IF EXISTS dodaj_zachowanie;
+DELIMITER $$
+CREATE PROCEDURE dodaj_zachowanie(IN nrLegitymacjiUcznia VARCHAR(11),IN Punkty INT)
+BEGIN
+	DECLARE q VARCHAR(200);
+	SET q='INSERT INTO Zachowanie(nrLegitymacjiUcznia,PunktyZachowania ) VALUES(?,?);';
+	PREPARE stmnt FROM q;
+	EXECUTE stmnt USING nrLegitymacjiUcznia,Punkty;
+	DEALLOCATE PREPARE stmnt;
+END $$
+DELIMITER ;
 
 
+-- 16procedura,	ktora dodaje jednostke do JednostkiLekcyjnej
 
+DROP PROCEDURE IF EXISTS dodaj_lekcje;
+DELIMITER $$
+CREATE PROCEDURE dodaj_lekcje(IN ID_Nauczyciela INT unsigned, IN ID_Klasy INT unsigned, IN ID_Przedmiotu INT unsigned)
+BEGIN
+	DECLARE q VARCHAR(200);
+	SET q='INSERT INTO JednostkaLekcyjna(ID_Nauczyciela,ID_Klasy,ID_Przedmiotu) VALUES (?,?,?);';
+	PREPARE stmnt FROM q;
+	EXECUTE stmnt USING ID_Nauczyciela, ID_Klasy, ID_Przedmiotu;
+	DEALLOCATE PREPARE stmnt;
+END $$
+DELIMITER ;
 
+-- 17procedura, ktora dodaje relacje opiekun-uczen
 
+DROP PROCEDURE IF EXISTS dodaj_relacje;
+DELIMITER $$
+CREATE PROCEDURE dodaj_relacje(IN nrLegitymacjiUcznia VARCHAR(11),IN ID_Opiekuna INT unsigned)
+BEGIN
+	DECLARE q VARCHAR(200);
+	SET q='INSERT INTO OpiekunUcznia(nrLegitymacjiUcznia,ID_Opiekuna) VALUES(?,?);';
+	PREPARE stmnt FROM q;
+	EXECUTE stmnt USING nrLegitymacjiUcznia,ID_Opiekuna;
+	DEALLOCATE PREPARE stmnt;
+END $$
+DELIMITER ;
 
 
 
