@@ -38,9 +38,9 @@ def legitymacja_generator(i):
     return nrLegitymacji
 try:
     connection = mysql.connector.connect(host='localhost',
-                                         database='<Nazwa_Bazy>',
-                                         user='<Nazwa_Użytkownika>',
-                                         password='<Haslo>')
+                                         database='dziennik',
+                                         user='admin',
+                                         password='123')
     cursor = connection.cursor()
     liczbaAdresow=100
     liczbaNauczycieli=30
