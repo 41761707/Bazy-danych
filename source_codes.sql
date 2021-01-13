@@ -168,7 +168,7 @@ ADD FOREIGN KEY(ID_Nauczyciela) REFERENCES Nauczyciel(ID_Nauczyciela) ON DELETE 
 
 -- 1trigger dla kontroli liczebnosci klasy
 -- dla insert
-DROP TRIGGER ile_osob_w_klasie_INSERT;
+DROP TRIGGER IF EXISTS ile_osob_w_klasie_INSERT;
 DELIMITER $$
 CREATE TRIGGER ile_osob_w_klasie_INSERT BEFORE INSERT ON Uczen
 FOR EACH ROW
@@ -179,7 +179,7 @@ UPDATE Klasa SET Liczebnosc=(SELECT Liczebnosc+1 FROM Klasa WHERE ID_Klasy=n) WH
 END $$
 DELIMITER ;
 -- dla update
-DROP TRIGGER ile_osob_w_klasie_UPDATE;
+DROP TRIGGER IF EXISTS ile_osob_w_klasie_UPDATE;
 DELIMITER $$
 CREATE TRIGGER ile_osob_w_klasie_UPDATE BEFORE UPDATE ON Uczen
 FOR EACH ROW
@@ -193,7 +193,7 @@ UPDATE Klasa SET Liczebnosc=(SELECT Liczebnosc-1 FROM Klasa WHERE ID_Klasy=o) WH
 END $$
 DELIMITER ;
 -- dla delete
-DROP TRIGGER ile_osob_w_klasie_DELETE;
+DROP TRIGGER IF EXISTS ile_osob_w_klasie_DELETE;
 DELIMITER $$
 CREATE TRIGGER ile_osob_w_klasie_DELETE BEFORE DELETE ON Uczen
 FOR EACH ROW
@@ -206,7 +206,7 @@ DELIMITER ;
 
 -- podobny lista triggerow dla zachowania
 -- dla insert
-DROP TRIGGER zachowanie_INSERT;
+DROP TRIGGER IF EXISTS zachowanie_INSERT;
 DELIMITER $$
 CREATE TRIGGER zachowanie_INSERT BEFORE INSERT ON Uwaga
 FOR EACH ROW
@@ -312,7 +312,7 @@ END $$
 DELIMITER ;
 
 -- 7procedura, która dla zadanego ucznia zwraca jego średnią z podanego przedmiotu
-DROP PROCEDURE IF EXISTS oblicz_srednia
+DROP PROCEDURE IF EXISTS oblicz_srednia;
 DELIMITER $$
 CREATE PROCEDURE oblicz_srednia(IN nrLegitymacji INT, IN ID_Przedmiotu INT)
 BEGIN
