@@ -4,9 +4,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class dziennikDAO {
-    private static Connection conn;
-    private final static String qStudent = "SELECT nrLegitymacji AS a, Imie AS b, Nazwisko AS c, ID_Adresu AS d, ID_Klasy AS e, PESEL AS f, nrTelefonu AS g, Email AS h FROM Uczen;";
+public abstract class DataConnect {
+    protected static Connection conn;
+}
+
+/*
+private final static String qStudent = "SELECT nrLegitymacji AS a, Imie AS b, Nazwisko AS c, ID_Adresu AS d, ID_Klasy AS e, PESEL AS f, nrTelefonu AS g, Email AS h FROM Uczen;";
     private final static String qTeacher = "SELECT ID_Nauczyciela AS a, Imie AS b, Nazwisko AS c, ID_Adresu AS d, nrGabinetu AS e, PESEL AS f, nrTelefonu AS g, Email AS h FROM Nauczyciel;";
     private final static String qParent = "SELECT ID_Opiekuna AS a, Imie AS b, Nazwisko AS c, ID_Adresu AS d, 0 AS e, PESEL AS f, nrTelefonu AS g, Email AS h FROM Opiekun;";
 
@@ -56,4 +59,4 @@ public class dziennikDAO {
             }
         }
     }
-}
+ */
