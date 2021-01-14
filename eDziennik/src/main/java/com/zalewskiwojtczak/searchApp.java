@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class searchApp extends JFrame {
+/*public class searchApp extends JFrame {
 
     private JPanel contentPane;
     private JTextField functionTextField;
@@ -15,11 +15,9 @@ public class searchApp extends JFrame {
     private JScrollPane scrollPane;
     private JTable table;
 
-    private dziennikDAO studentsDAO;
+    //private dziennikDAO studentsDAO;
 
-    /**
-     * Launch the application.
-     */
+    /*
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -33,9 +31,7 @@ public class searchApp extends JFrame {
         });
     }
 
-    /**
-     * Create the frame.
-     */
+
     public searchApp() {
         try {
             studentsDAO = new dziennikDAO();
@@ -91,4 +87,4 @@ public class searchApp extends JFrame {
         scrollPane.setViewportView(table);
     }
 
-}
+}*/
