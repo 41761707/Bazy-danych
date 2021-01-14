@@ -1,8 +1,6 @@
 package com.zalewskiwojtczak;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DataConnect {
     protected static Connection conn;

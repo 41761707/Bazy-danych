@@ -2,17 +2,17 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class ParentTableModel extends AbstractPersonTableModel {
+public class ParentTableModel extends myAbstractTableModel {
 
     public ParentTableModel(List<Person> students){
         String[] studentColumns =  { "id", "Imie", "Nazwisko", "Adres", "Pesel", "Telefon", "Email"};
         columnNames = studentColumns;
-        people = students;
+        objects = students;
     }
 
     @Override
     public Object getValueAt(int row, int col) {
-        tempPerson = people.get(row);
+        Person tempPerson = (Person) objects.get(row);
 
         switch (col) {
             case 0:
