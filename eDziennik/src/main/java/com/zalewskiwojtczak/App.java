@@ -4,9 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.util.Properties;
 
 public class App extends JFrame {
     private DataConnect connector;
+    private final String loginA;
+    private final String passwordA;
     private JFrame frame;
     private String type = "";
     private JButton button;
@@ -30,40 +34,80 @@ public class App extends JFrame {
         });
     }
 
-    public App(){
+    public App() throws Exception {
+        Properties props = new Properties();
+        props.load(new FileInputStream("/home/zalewski26/Desktop/properties"));
+        loginA = props.getProperty("loginA");
+        passwordA = props.getProperty("passwordA");
+
         frame = prepareFrame();
         frame.setVisible(true);
 
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                frame.setVisible(false);
                 String login = loginField.getText();
                 String passwd = new String(passwordField.getPassword());
                 try {
                     if (type.equals("Uczeń")) {
-                        frame.setSize(900, 900);
                         connector = new StudentDataConnect(login, passwd);
-                        frame.setContentPane(new StudentPanel(connector));
-                        frame.setVisible(true);
+                        if(connector.failed())
+                        {
+                            JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
+                                    "Błąd", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            frame.setVisible(false);
+                            frame.setSize(900, 900);
+                            frame.setContentPane(new StudentPanel(connector));
+                            frame.setVisible(true);
+                        }
                     }
                     else if (type.equals("Nauczyciel")){
-                        frame.setSize(900, 900);
                         connector = new TeacherDataConnect(login, passwd);
-                        frame.setContentPane(new TeacherPanel(connector));
-                        frame.setVisible(true);
+                        if(connector.failed())
+                        {
+                            JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
+                                    "Błąd", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            frame.setVisible(false);
+                            frame.setSize(900, 900);
+                            frame.setContentPane(new TeacherPanel(connector));
+                            frame.setVisible(true);
+                        }
                     }
                     else if (type.equals("Opiekun")){
-                        frame.setSize(900, 900);
                         connector = new ParentDataConnect(login, passwd);
-                        frame.setContentPane(new ParentPanel(connector));
-                        frame.setVisible(true);
+                        if(connector.failed())
+                        {
+                            JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
+                                    "Błąd", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            frame.setVisible(false);
+                            frame.setSize(900, 900);
+                            frame.setContentPane(new ParentPanel(connector));
+                            frame.setVisible(true);
+                        }
                     }
                     else if (type.equals("Admin")){
-                        frame.setSize(900, 900);
-                        connector = new AdminDataConnect(login, passwd);
-                        frame.setContentPane(new AdminPanel(connector));
-                        frame.setVisible(true);
+                        connector = new AdminDataConnect(loginA, passwordA, login, passwd);
+                        if(connector.failed())
+                        {
+                            JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
+                                    "Błąd", JOptionPane.ERROR_MESSAGE);
+                        }
+                        else
+                        {
+                            frame.setVisible(false);
+                            frame.setSize(900, 900);
+                            frame.setContentPane(new AdminPanel(connector));
+                            frame.setVisible(true);
+                        }
                     }
                     else {
                         return;
@@ -73,6 +117,7 @@ public class App extends JFrame {
                 }
             }
         });
+
         buttonS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

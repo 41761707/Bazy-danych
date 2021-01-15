@@ -4,6 +4,7 @@ import java.sql.*;
 
 public abstract class DataConnect {
     protected static Connection conn;
+    public abstract boolean failed();
 }
 
 /*
