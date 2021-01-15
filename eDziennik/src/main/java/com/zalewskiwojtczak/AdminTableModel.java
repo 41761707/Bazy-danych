@@ -2,10 +2,10 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class ParentTableModel extends myAbstractTableModel {
+public class AdminTableModel extends myAbstractTableModel {
 
-    public ParentTableModel(List<Person> students){
-        String[] studentColumns =  { "id", "Imie", "Nazwisko", "Adres", "-", "Pesel", "Telefon", "Email"};
+    public AdminTableModel(List<Person> students){
+        String[] studentColumns =  { "id", "Imie", "Nazwisko", "Adres", "Pesel", "Telefon", "Email"};
         columnNames = studentColumns;
         objects = students;
     }
@@ -24,12 +24,10 @@ public class ParentTableModel extends myAbstractTableModel {
             case 3:
                 return tempPerson.getAddress();
             case 4:
-                return 0;
-            case 5:
                 return tempPerson.getPesel();
-            case 6:
+            case 5:
                 return tempPerson.getPhone();
-            case 7:
+            case 6:
                 return tempPerson.getEmail();
             default:
                 return null;
