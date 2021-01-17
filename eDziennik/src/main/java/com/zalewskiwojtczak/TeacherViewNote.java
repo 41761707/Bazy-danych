@@ -3,12 +3,12 @@ package com.zalewskiwojtczak;
 import java.util.Date;
 
 public class TeacherViewNote {
-    private int points;
-    private String legitymacja;
-    private String studentName;
-    private String studentSurname;
-    private String className;
-    private String comment;
+    protected int points;
+    protected String legitymacja;
+    protected String studentName;
+    protected String studentSurname;
+    protected String className;
+    protected String comment;
 
     TeacherViewNote(int points, String legitymacja, String studentName, String studentSurname, String className, String comment) {
         this.points = points;

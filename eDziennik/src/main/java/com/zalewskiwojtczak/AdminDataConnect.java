@@ -15,11 +15,11 @@ public class AdminDataConnect extends DataConnect {
 
     public AdminDataConnect(String loginA, String passwordA, String userlogin, String userpassword) throws Exception {
         conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/dziennik?noAccessToProcedureBodies=true",
-                loginA, passwordA);
+                "jdbc:mysql://localhost:3306/dziennik2?noAccessToProcedureBodies=true",
+                "admin", "admin");
 
-        this.userLogin="Pawel";
-        this.userPassword="Zalewski";
+        this.userLogin=userlogin;
+        this.userPassword=userpassword;;
         CallableStatement cs = (CallableStatement) conn.prepareCall("{CALL user_detail(?,?,?)}");
         cs.setString(1, userLogin);
         cs.setString(2, userPassword);

@@ -14,8 +14,8 @@ public class StudentDataConnect extends DataConnect {
 
     public StudentDataConnect(String userLogin, String userPassword) throws Exception {
         conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/dziennik?noAccessToProcedureBodies=true",
-                "admin", "123");
+                "jdbc:mysql://localhost:3306/dziennik2?noAccessToProcedureBodies=true",
+                "uczen", "uczen");
 
         this.userLogin = userLogin;
         this.userPassword = userPassword;

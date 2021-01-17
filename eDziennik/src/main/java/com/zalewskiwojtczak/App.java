@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class App extends JFrame {
     private DataConnect connector;
-    private final String loginA;
-    private final String passwordA;
+    private  String loginA;
+    private String passwordA;
     private JFrame frame;
     private String type = "";
     private JButton button;
@@ -36,9 +36,9 @@ public class App extends JFrame {
 
     public App() throws Exception {
         Properties props = new Properties();
-        props.load(new FileInputStream("/home/zalewski26/Desktop/properties"));
-        loginA = props.getProperty("loginA");
-        passwordA = props.getProperty("passwordA");
+        //props.load(new FileInputStream("/home/zalewski26/Desktop/properties"));
+        //loginA = props.getProperty("loginA");
+        //passwordA = props.getProperty("passwordA");
 
         frame = prepareFrame();
         frame.setVisible(true);
@@ -95,6 +95,8 @@ public class App extends JFrame {
                         }
                     }
                     else if (type.equals("Admin")){
+                    	loginA="root";
+                    	passwordA="Piotrkowice64";
                         connector = new AdminDataConnect(loginA, passwordA, login, passwd);
                         if(connector.failed())
                         {

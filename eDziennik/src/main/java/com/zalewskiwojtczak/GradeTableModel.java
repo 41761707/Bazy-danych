@@ -14,7 +14,6 @@ public class GradeTableModel extends myAbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         Grade tempGrade = (Grade) objects.get(row);
-
         switch (col) {
             case 0:
                 return tempGrade.getNote();

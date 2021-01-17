@@ -13,7 +13,6 @@ public class StudentTableModel extends myAbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         Person tempPerson = (Person) objects.get(row);
-
         switch (col) {
             case 0:
                 return tempPerson.getId();

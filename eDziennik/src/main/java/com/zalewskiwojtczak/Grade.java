@@ -3,14 +3,14 @@ package com.zalewskiwojtczak;
 import java.util.Date;
 
 public class Grade {
-    private int note;
-    private String teacherName;
-    private String teacherSurname;
-    private String subject;
-    private Date date;
-    private String comment;
+    protected float note;
+    protected String teacherName;
+    protected String teacherSurname;
+    protected String subject;
+    protected Date date;
+    protected String comment;
 
-    Grade(int note, String teacherName, String teacherSurname, String subject, Date date, String comment) {
+    Grade(float note, String teacherName, String teacherSurname, String subject, Date date, String comment) {
         this.note = note;
         this.teacherName = teacherName;
         this.teacherSurname = teacherSurname;
@@ -19,7 +19,7 @@ public class Grade {
         this.comment = comment;
     }
 
-    public int getNote(){
+    public float getNote(){
         return note;
     }
 
