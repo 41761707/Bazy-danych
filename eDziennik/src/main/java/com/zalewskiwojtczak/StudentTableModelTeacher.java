@@ -2,9 +2,9 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class TeacherViewStudentTableModel extends myAbstractTableModel {
+public class StudentTableModelTeacher extends myAbstractTableModel {
 
-	public TeacherViewStudentTableModel(List<TeacherViewStudents> students){
+    public StudentTableModelTeacher(List<Person> students){
         String[] studentColumns =  {"Legitymacja","Imię","Nazwisko","Klasa"};
         columnNames = studentColumns;
         objects = students;
@@ -12,16 +12,16 @@ public class TeacherViewStudentTableModel extends myAbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        TeacherViewStudents tempStudent = (TeacherViewStudents) objects.get(row);
+        Person tempStudent = (Person) objects.get(row);
         switch (col) {
             case 0:
-            	return tempStudent.getLegitymacja();
+                return tempStudent.getId();
             case 1:
-                return tempStudent.getStudentName();
+                return tempStudent.getFirstName();
             case 2:
-                return tempStudent.getStudentSurname();
+                return tempStudent.getLastName();
             case 3:
-            	return tempStudent.getClassName();
+                return tempStudent.getClassName();
             default:
                 return null;
         }

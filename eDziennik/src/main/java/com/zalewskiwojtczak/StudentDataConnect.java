@@ -12,10 +12,10 @@ public class StudentDataConnect extends DataConnect {
     private final String userPassword;
     private boolean connection = true;
 
-    public StudentDataConnect(String userLogin, String userPassword) throws Exception {
+    public StudentDataConnect(String loginS, String passwordS, String userLogin, String userPassword) throws Exception {
         conn = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/dziennik2?noAccessToProcedureBodies=true",
-                "uczen", "uczen");
+                loginS, passwordS);
 
         this.userLogin = userLogin;
         this.userPassword = userPassword;

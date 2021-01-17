@@ -58,7 +58,7 @@ CREATE TABLE Opiekun(
 	Login varchar(40) NOT NULL,
 	Haslo varchar(50) NOT NULL,
 	PRIMARY KEY(ID_Opiekuna)
-);	
+);
 -- Utworzenie tabeli Ocena
 CREATE TABLE Ocena(
 	ID_Oceny int unsigned NOT NULL AUTO_INCREMENT,
@@ -118,7 +118,7 @@ CREATE TABLE JednostkaLekcyjna(
 	ID_Nauczyciela int unsigned NOT NULL,
 	ID_Klasy int unsigned NOT NULL,
 	ID_Przedmiotu int unsigned NOT NULL,
-	FOREIGN KEY (ID_Nauczyciela) REFERENCES Nauczyciel(ID_Nauczyciela) ON DELETE CASCADE, 
+	FOREIGN KEY (ID_Nauczyciela) REFERENCES Nauczyciel(ID_Nauczyciela) ON DELETE CASCADE,
 	FOREIGN KEY (ID_Klasy) REFERENCES Klasa(ID_Klasy) ON DELETE CASCADE,
 	FOREIGN KEY (ID_Przedmiotu) REFERENCES Przedmiot(ID_Przedmiotu) ON DELETE CASCADE
 );
@@ -133,7 +133,7 @@ CREATE TABLE OpiekunUcznia(
 ALTER TABLE Uczen
 ADD FOREIGN KEY (ID_Klasy) REFERENCES Klasa(ID_Klasy) ON DELETE CASCADE;
 ALTER TABLE Uczen
-ADD FOREIGN KEY (ID_Adresu) REFERENCES Adres(ID_Adresu) ON DELETE CASCADE; 
+ADD FOREIGN KEY (ID_Adresu) REFERENCES Adres(ID_Adresu) ON DELETE CASCADE;
 -- dodawanie relacji dla tabeli Nauczyciel
 ALTER TABLE Nauczyciel
 ADD FOREIGN KEY(ID_Adresu) REFERENCES Adres(ID_Adresu) ON DELETE CASCADE;
@@ -215,7 +215,7 @@ UPDATE Zachowanie SET PunktyZachowania=(SELECT PunktyZachowania+n FROM Zachowani
 END $$
 DELIMITER ;
 
---dla update
+-- dla update
 DELIMITER $$
 CREATE TRIGGER zachowanie_UPDATE BEFORE UPDATE ON Uwaga
 FOR EACH ROW
@@ -232,7 +232,7 @@ UPDATE Zachowanie SET PunktyZachowania=(SELECT PunktyZachowania-i FROM Zachowani
 UPDATE Zachowanie SET PunktyZachowania=(SELECT PunktyZachowania+n FROM Zachowanie WHERE nrLegitymacjiUcznia=uczenn) WHERE nrLegitymacjiUcznia=uczenn;
 END $$
 DELIMITER ;
---dla delete
+-- dla delete
 DELIMITER $$
 CREATE TRIGGER zachowanie_DELETE BEFORE DELETE ON Uwaga
 FOR EACH ROW
@@ -254,7 +254,6 @@ BEGIN
 	PREPARE stmnt FROM q;
 	EXECUTE stmnt USING nrLegitymacjiUcznia,ID_Nauczyciela,ID_Przedmiotu,Data,Ocena,Komentarz;
 	DEALLOCATE PREPARE stmnt;
-	END IF;
 END $$
 DELIMITER ;
 
@@ -297,9 +296,9 @@ BEGIN
     	SET q='INSERT INTO Nauczyciel(ID_Adresu,nrGabinetu,Imie,Nazwisko,PESEL,nrTelefonu,Email,Login,Haslo) VALUES (?,?,?,?,?,?,?,?,?);';
     	PREPARE stmnt FROM q;
     	EXECUTE stmnt USING ID_Adresu,nrGabinetu,Imie,Nazwisko,PESEL,nrTelefonu,Email,Login,Hash;
-    	DEALLOCATE PREPARE stmnt; 
+    	DEALLOCATE PREPARE stmnt;
 END $$
-DELIMITER ; 
+DELIMITER ;
 
 -- 6procedura dodajaca opiekuna do tabeli Opiekunowie
 DROP PROCEDURE IF EXISTS dodaj_opiekuna;
@@ -308,6 +307,7 @@ CREATE PROCEDURE dodaj_opiekuna(IN Imie VARCHAR(40),IN Nazwisko VARCHAR(40),IN I
 BEGIN
 	DECLARE q VARCHAR(300);
 	DECLARE Hash VARCHAR(160);
+	SET Hash=SHA(Haslo);
      SET q='INSERT INTO Opiekun(Imie,Nazwisko,ID_Adresu,PESEL,nrTelefonu,Email,Login,Haslo) VALUES (?,?,?,?,?,?,?,?);';
      PREPARE stmnt FROM q;
      EXECUTE stmnt USING Imie,Nazwisko,ID_Adresu,PESEL,nrTelefonu,Email,Login,Hash;
@@ -330,12 +330,13 @@ END $$
 DELIMITER ;
 
 -- TODO 4 userów(nauczyciel,administrator,opiekun,uczeń) OGÓLNYCH i ustawienie uprawnień
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
-CREATE USER 'nauczyciel'@'localhost' IDENTIFIED BY 'nauczyciel';
-CREATE USER 'opiekun'@'localhost' IDENTIFIED BY 'opiekun';
-CREATE USER 'uczen'@'localhost' IDENTIFIED BY 'uczen';
+CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin';
+CREATE USER IF NOT EXISTS 'nauczyciel'@'localhost' IDENTIFIED BY 'nauczyciel';
+CREATE USER IF NOT EXISTS 'opiekun'@'localhost' IDENTIFIED BY 'opiekun';
+CREATE USER IF NOT EXISTS 'uczen'@'localhost' IDENTIFIED BY 'uczen';
 
 GRANT ALL PRIVILEGES ON dziennik2. * TO 'admin'@'localhost';
+GRANT SUPER ON *.* TO 'admin'@'localhost';
 
 GRANT SELECT ON dziennik2.Uczen TO 'uczen'@'localhost';
 GRANT SELECT ON dziennik2.Nauczyciel TO 'uczen'@'localhost';
@@ -419,7 +420,7 @@ BEGIN
     EXECUTE stmnt USING ID_Klasy;
     DEALLOCATE PREPARE stmnt;
 END $$
-DELIMITER;
+DELIMITER ;
 
 -- 10procedura dodajaca adres do tabeli Adres
 DROP PROCEDURE IF EXISTS dodaj_adres;
@@ -532,29 +533,29 @@ BEGIN
 END $$
 DELIMITER ;
 
---18 a
-SET @Type=""
+-- 18 a
+SET @Type = '';
 DROP PROCEDURE IF EXISTS user_detail;
 DELIMITER $$
-CREATE PROCEDURE user_detail(IN userLogin VARCHAR(40),IN userHaslo VARCHAR(40),OUT Type VARCHAR(14)) 
-BEGIN	
+CREATE PROCEDURE user_detail(IN userLogin VARCHAR(40),IN userHaslo VARCHAR(40),OUT Type VARCHAR(14))
+BEGIN
 	DECLARE q VARCHAR(1500);
 	DECLARE userHash VARCHAR(160);
 	SET userHash=SHA1(userHaslo);
-	IF ((SELECT COUNT(NrLegitymacji) FROM Uczen WHERE nrLegitymacji=(SELECT nrLegitymacji FROM Uczen WHERE Uczen.Login=userLogin AND Uczen.Haslo=userHash))>0) THEN SET Type="Uczen";
-	ELSEIF ((SELECT COUNT(ID_Nauczyciela) FROM Nauczyciel WHERE ID_Nauczyciela=(SELECT ID_Nauczyciela FROM Nauczyciel WHERE Nauczyciel.Login=userLogin AND Nauczyciel.Haslo=userHash))>0) THEN SET Type="Nauczyciel";
-	ELSEIF ((SELECT COUNT(ID_Opiekuna) FROM Opiekun WHERE ID_Opiekuna=(SELECT ID_Opiekuna FROM Opiekun WHERE Opiekun.Login=userLogin AND Opiekun.Haslo=userHash))>0) THEN SET Type="Opiekun";
-	ELSEIF ((SELECT COUNT(ID_Administratora) FROM Administrator WHERE ID_Administratora=(SELECT ID_Administratora FROM Administrator WHERE Administrator.Login=userLogin AND Administrator.Haslo=userHash))>0) THEN SET Type="Administrator";
+	IF ((SELECT COUNT(NrLegitymacji) FROM Uczen WHERE nrLegitymacji=(SELECT nrLegitymacji FROM Uczen WHERE Uczen.Login=userLogin AND Uczen.Haslo=userHash))>0) THEN SET Type = 'Uczen';
+	ELSEIF ((SELECT COUNT(ID_Nauczyciela) FROM Nauczyciel WHERE ID_Nauczyciela=(SELECT ID_Nauczyciela FROM Nauczyciel WHERE Nauczyciel.Login=userLogin AND Nauczyciel.Haslo=userHash))>0) THEN SET Type= 'Nauczyciel';
+	ELSEIF ((SELECT COUNT(ID_Opiekuna) FROM Opiekun WHERE ID_Opiekuna=(SELECT ID_Opiekuna FROM Opiekun WHERE Opiekun.Login=userLogin AND Opiekun.Haslo=userHash))>0) THEN SET Type = 'Opiekun';
+	ELSEIF ((SELECT COUNT(ID_Administratora) FROM Administrator WHERE ID_Administratora=(SELECT ID_Administratora FROM Administrator WHERE Administrator.Login=userLogin AND Administrator.Haslo=userHash))>0) THEN SET Type = 'Administrator';
 	END IF;
-END $$
+END $$;
 DELIMITER ;
 
 -- 18b procedura znajdująca uzytkownika, ktory zalogowal sie do bazy
-SET @Type="";
+SET @Type='';
 DROP PROCEDURE IF EXISTS user_detail;
 DELIMITER $$
-CREATE PROCEDURE user_detail(IN userLogin VARCHAR(40),IN userHaslo VARCHAR(40),OUT Type VARCHAR(14)) 
-BEGIN	
+CREATE PROCEDURE user_detail(IN userLogin VARCHAR(40),IN userHaslo VARCHAR(40),OUT Type VARCHAR(14))
+BEGIN
 	DECLARE q VARCHAR(1500);
 	DECLARE userHash VARCHAR(160);
 	SET userHash=SHA1(userHaslo);
@@ -571,7 +572,7 @@ END $$
 DELIMITER ;
 
 -- 19procedura zwracająca nrLegitymacji ucznia po loginie i haśle
-SET @StudentID="";
+SET @StudentID='';
 
 DROP PROCEDURE IF EXISTS student_id;
 DELIMITER $$
@@ -610,7 +611,7 @@ SET @ParentID=0;
 DROP PROCEDURE IF EXISTS parent_id;
 DELIMITER $$
 CREATE PROCEDURE parent_id(IN userLogin VARCHAR(40),IN userHaslo VARCHAR(40),OUT ParentID INT unsigned)
-BEGIN 
+BEGIN
 	DECLARE q VARCHAR(200);
 	DECLARE hash VARCHAR(160);
 	SET hash=SHA1(userHaslo);
@@ -748,13 +749,13 @@ DELIMITER $$
 CREATE PROCEDURE marks_teacher_view(IN firstname VARCHAR(40),IN lastname VARCHAR(40),IN ID_Nauczyciela INT unsigned)
 BEGIN
 	DECLARE q VARCHAR(1000);
-	SET q='SELECT Ocena.Ocena, Uczen.nrLegitymacji, Uczen.Imie, Uczen.Nazwisko, CONCAT(Klasa.Rocznik,Klasa.Oddzial),Przedmiot.Nazwa,Ocena.Data,Ocena.Komentarz FROM Ocena JOIN Uczen ON Ocena.nrLegitymacjiUcznia=Uczen.nrLegitymacji JOIN Klasa ON Uczen.ID_Klasy=Klasa.ID_Klasy JOIN Przedmiot ON Ocena.ID_Przedmiotu=Przedmiot.ID_Przedmiotu  WHERE Uczen.Imie LIKE ? AND Uczen.Nazwisko LIKE ? AND Ocena.ID_Nauczyciela=?;'; 
+	SET q='SELECT Ocena.Ocena, Uczen.nrLegitymacji, Uczen.Imie, Uczen.Nazwisko, CONCAT(Klasa.Rocznik,Klasa.Oddzial),Przedmiot.Nazwa,Ocena.Data,Ocena.Komentarz FROM Ocena JOIN Uczen ON Ocena.nrLegitymacjiUcznia=Uczen.nrLegitymacji JOIN Klasa ON Uczen.ID_Klasy=Klasa.ID_Klasy JOIN Przedmiot ON Ocena.ID_Przedmiotu=Przedmiot.ID_Przedmiotu  WHERE Uczen.Imie LIKE ? AND Uczen.Nazwisko LIKE ? AND Ocena.ID_Nauczyciela=?;';
 	PREPARE stmnt FROM q;
 	EXECUTE stmnt USING firstname,lastname,ID_Nauczyciela;
 	DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
-	
+
 -- 31 procedura zwracająca wszystkie uwagi wystawione przez danego nauczyciela
 DROP PROCEDURE IF EXISTS notes_teacher_view;
 DELIMITER $$
@@ -762,7 +763,7 @@ CREATE PROCEDURE notes_teacher_view(IN firstname VARCHAR(40), IN lastname VARCHA
 BEGIN
 	DECLARE q VARCHAR(1000);
 	SET q='SELECT Uwaga.OdjetePunkty,Uczen.nrLegitymacji,Uczen.Imie,Uczen.Nazwisko,CONCAT(Klasa.Rocznik,Klasa.Oddzial),
-Uwaga.Komentarz FROM Uwaga JOIN Uczen ON Uwaga.nrLegitymacjiUcznia=Uczen.nrLegitymacji JOIN Nauczyciel ON Uwaga.ID_Nauczyciela=Nauczyciel.ID_Nauczyciela JOIN Klasa ON Uczen.ID_Klasy=Klasa.ID_Klasy WHERE Uczen.Imie LIKE ? AND Uczen.Nazwisko LIKE ? AND Uwaga.ID_Nauczyciela=?;'; 
+Uwaga.Komentarz FROM Uwaga JOIN Uczen ON Uwaga.nrLegitymacjiUcznia=Uczen.nrLegitymacji JOIN Nauczyciel ON Uwaga.ID_Nauczyciela=Nauczyciel.ID_Nauczyciela JOIN Klasa ON Uczen.ID_Klasy=Klasa.ID_Klasy WHERE Uczen.Imie LIKE ? AND Uczen.Nazwisko LIKE ? AND Uwaga.ID_Nauczyciela=?;';
 	PREPARE stmnt FROM q;
 	EXECUTE stmnt USING firstname,lastname,ID_Nauczyciela;
 	DEALLOCATE PREPARE stmnt;
@@ -794,7 +795,7 @@ BEGIN
 END $$
 DELIMITER ;
 
---34 procedura sprawdzajaca czy podana legitymacja znajduje sie w bazie
+-- 34 procedura sprawdzajaca czy podana legitymacja znajduje sie w bazie
 DROP PROCEDURE IF EXISTS legitymacja_check;
 DELIMITER $$
 CREATE PROCEDURE legitymacja_check(IN nrLegitymacji VARCHAR(11))
@@ -806,9 +807,9 @@ BEGIN
 	DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
-	
+
 -- 35 proceudra edytująca ucznia
-DROP PROCEDURE edit_student;
+DROP PROCEDURE IF EXISTS edit_student;
 DELIMITER $$
 CREATE PROCEDURE edit_student(IN currentID VARCHAR(10), IN id VARCHAR(10), IN firstname VARCHAR(40), IN lastname VARCHAR(40),
                                 IN address INT UNSIGNED, IN class INT UNSIGNED, IN pesel VARCHAR(11),
@@ -826,7 +827,7 @@ END $$
 DELIMITER ;
 
 -- 36 procedura edytująca nauczyciela
-DROP PROCEDURE edit_teacher;
+DROP PROCEDURE IF EXISTS edit_teacher;
 DELIMITER $$
 CREATE PROCEDURE edit_teacher(IN currentID VARCHAR(10), IN id VARCHAR(10), IN firstname VARCHAR(40), IN lastname VARCHAR(40),
                               IN address INT UNSIGNED, IN class INT UNSIGNED, IN pesel VARCHAR(11),
@@ -844,7 +845,7 @@ END $$
 DELIMITER ;
 
 -- 37 procedura edytująca opiekuna
-DROP PROCEDURE edit_parent;
+DROP PROCEDURE IF EXISTS edit_parent;
 DELIMITER $$
 CREATE PROCEDURE edit_parent(IN currentID VARCHAR(10), IN id VARCHAR(10), IN firstname VARCHAR(40), IN lastname VARCHAR(40),
                               IN address INT UNSIGNED, IN pesel VARCHAR(11),
@@ -861,8 +862,8 @@ BEGIN
 END $$
 DELIMITER ;
 
---38 procedura edytująca administratora
-DROP PROCEDURE edit_admin;
+-- 38 procedura edytująca administratora
+DROP PROCEDURE IF EXISTS edit_admin;
 DELIMITER $$
 CREATE PROCEDURE edit_admin(IN currentID VARCHAR(10), IN id VARCHAR(10), IN firstname VARCHAR(40), IN lastname VARCHAR(40),
                              IN address INT UNSIGNED, IN pesel VARCHAR(11),
@@ -878,9 +879,9 @@ BEGIN
     DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
-	
---39 procedura usuwająca ucznia z bazy
-DROP PROCEDURE remove_student;
+
+-- 39 procedura usuwająca ucznia z bazy
+DROP PROCEDURE IF EXISTS remove_student;
 DELIMITER $$
 CREATE PROCEDURE remove_student(IN id VARCHAR(10))
 BEGIN
@@ -893,7 +894,7 @@ END $$
 DELIMITER ;
 
 -- 40 procedura usuwająca nauczyciela z bazy
-DROP PROCEDURE remove_teacher;
+DROP PROCEDURE IF EXISTS remove_teacher;
 DELIMITER $$
 CREATE PROCEDURE remove_teacher(IN id VARCHAR(10))
 BEGIN
@@ -906,7 +907,7 @@ END $$
 DELIMITER ;
 
 -- 41 procedura usuwająca opiekuna z bazy
-DROP PROCEDURE remove_parent;
+DROP PROCEDURE IF EXISTS remove_parent;
 DELIMITER $$
 CREATE PROCEDURE remove_parent(IN id VARCHAR(10))
 BEGIN
@@ -919,7 +920,7 @@ END $$
 DELIMITER ;
 
 -- 42 procedura usuwająca administratora z bazy
-DROP PROCEDURE remove_admin;
+DROP PROCEDURE IF EXISTS remove_admin;
 DELIMITER $$
 CREATE PROCEDURE remove_admin(IN id VARCHAR(10))
 BEGIN
@@ -929,7 +930,7 @@ BEGIN
     EXECUTE stmnt USING id;
     DEALLOCATE PREPARE stmnt;
 END $$
-DELIMITER ;	
+DELIMITER ;
 
 -- 43temp
 DROP PROCEDURE IF EXISTS create_student;
@@ -978,7 +979,7 @@ BEGIN
     DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
-	
+
 -- 46 procedura zwracająca wszystkich uczniów danego opiekuna w szkole
 DROP PROCEDURE IF EXISTS parent_students;
 DELIMITER $$
@@ -991,7 +992,7 @@ BEGIN
 	DEALLOCATE PREPARE stmnt;
 END $$
 DELIMITER ;
-	
+
 -- 47 procedura zwracająca oceny dla każdego ucznia danego opiekuna w szkole
 DROP PROCEDURE IF EXISTS parent_grades;
 DELIMITER $$
@@ -1015,7 +1016,7 @@ PREPARE stmnt FROM q;
 	EXECUTE stmnt USING firstName, lastName, ID_Opiekuna;
 	DEALLOCATE PREPARE stmnt;
 END $$
-DELIMITER ;	
+DELIMITER ;
 -- 49 procedura zwracająca zachowanie dla każdego ucznia danego opiekuna w szkole
 DROP PROCEDURE IF EXISTS parent_behaviour;
 DELIMITER $$

@@ -5,7 +5,7 @@ import java.util.List;
 public class NoteTableModel extends myAbstractTableModel {
 
     public NoteTableModel(List<Note> grades){
-        String[] noteColumns =  { "Punkty ujemne", "Imie nauczyciela", "Nazwisko nauczyciela", "Komentarz"};
+        String[] noteColumns =  { "Punkty", "Imie nauczyciela", "Nazwisko nauczyciela", "Komentarz"};
         columnNames = noteColumns;
         objects = grades;
     }
@@ -16,11 +16,11 @@ public class NoteTableModel extends myAbstractTableModel {
 
         switch (col) {
             case 0:
-                return tempNote.getMinusPoints();
+                return tempNote.getPoints();
             case 1:
-                return tempNote.getTeacherName();
+                return tempNote.getFirstName();
             case 2:
-                return tempNote.getTeacherSurname();
+                return tempNote.getLastName();
             case 3:
                 return tempNote.getComment();
             default:

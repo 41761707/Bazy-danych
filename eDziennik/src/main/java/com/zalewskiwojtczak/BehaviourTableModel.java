@@ -2,9 +2,9 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class ParentViewBehaviourModel extends myAbstractTableModel{
-	
-	public ParentViewBehaviourModel(List<ParentViewBehaviour> grades){
+public class BehaviourTableModel extends myAbstractTableModel{
+
+    public BehaviourTableModel(List<Behaviour> grades){
         String[] gradeColumns =  { "Imie dziecka","Imie nazwisko","Punkty"};
         columnNames = gradeColumns;
         objects = grades;
@@ -12,7 +12,7 @@ public class ParentViewBehaviourModel extends myAbstractTableModel{
 
     @Override
     public Object getValueAt(int row, int col) {
-        ParentViewBehaviour tempGrade = (ParentViewBehaviour ) objects.get(row);
+        Behaviour tempGrade = (Behaviour ) objects.get(row);
         switch (col) {
             case 0:
                 return tempGrade.getStudentName();

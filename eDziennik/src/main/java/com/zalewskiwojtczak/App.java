@@ -9,8 +9,9 @@ import java.util.Properties;
 
 public class App extends JFrame {
     private DataConnect connector;
-    private  String loginA;
-    private String passwordA;
+    private final String loginA;
+    private final String passwordA;
+    private Properties props;
     private JFrame frame;
     private String type = "";
     private JButton button;
@@ -35,10 +36,11 @@ public class App extends JFrame {
     }
 
     public App() throws Exception {
-        Properties props = new Properties();
-        //props.load(new FileInputStream("/home/zalewski26/Desktop/properties"));
-        //loginA = props.getProperty("loginA");
-        //passwordA = props.getProperty("passwordA");
+        props = new Properties();
+        props.load(new FileInputStream("/home/zalewski26/Desktop/properties"));
+        loginA = props.getProperty("loginA");
+        passwordA = props.getProperty("passwordA");
+
 
         frame = prepareFrame();
         frame.setVisible(true);
@@ -50,7 +52,7 @@ public class App extends JFrame {
                 String passwd = new String(passwordField.getPassword());
                 try {
                     if (type.equals("Uczeń")) {
-                        connector = new StudentDataConnect(login, passwd);
+                        connector = new StudentDataConnect(props.getProperty("loginS"), props.getProperty("passwordS"), login, passwd);
                         if(connector.failed())
                         {
                             JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
@@ -60,12 +62,13 @@ public class App extends JFrame {
                         {
                             frame.setVisible(false);
                             frame.setSize(900, 900);
+                            frame.setResizable(false);
                             frame.setContentPane(new StudentPanel(connector));
                             frame.setVisible(true);
                         }
                     }
                     else if (type.equals("Nauczyciel")){
-                        connector = new TeacherDataConnect(login, passwd);
+                        connector = new TeacherDataConnect(props.getProperty("loginT"), props.getProperty("passwordT"), login, passwd);
                         if(connector.failed())
                         {
                             JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
@@ -75,12 +78,13 @@ public class App extends JFrame {
                         {
                             frame.setVisible(false);
                             frame.setSize(900, 900);
+                            frame.setResizable(false);
                             frame.setContentPane(new TeacherPanel(connector));
                             frame.setVisible(true);
                         }
                     }
                     else if (type.equals("Opiekun")){
-                        connector = new ParentDataConnect(login, passwd);
+                        connector = new ParentDataConnect(props.getProperty("loginP"), props.getProperty("passwordP"), login, passwd);
                         if(connector.failed())
                         {
                             JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
@@ -90,14 +94,13 @@ public class App extends JFrame {
                         {
                             frame.setVisible(false);
                             frame.setSize(900, 900);
+                            frame.setResizable(false);
                             frame.setContentPane(new ParentPanel(connector));
                             frame.setVisible(true);
                         }
                     }
                     else if (type.equals("Admin")){
-                    	loginA="root";
-                    	passwordA="Piotrkowice64";
-                        connector = new AdminDataConnect(loginA, passwordA, login, passwd);
+                        connector = new AdminDataConnect(props.getProperty("loginA"), props.getProperty("passwordA"), login, passwd);
                         if(connector.failed())
                         {
                             JOptionPane.showMessageDialog(frame, "Nie udało się połączyć. Sprawdź dane logowania",
@@ -107,6 +110,7 @@ public class App extends JFrame {
                         {
                             frame.setVisible(false);
                             frame.setSize(900, 900);
+                            frame.setResizable(false);
                             frame.setContentPane(new AdminPanel(connector));
                             frame.setVisible(true);
                         }

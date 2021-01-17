@@ -6,6 +6,7 @@ public class Person {
     private String lastname;
     private int address;
     private int classOrClassroom;
+    private String className;
     private String pesel;
     private int phone;
     private String email;
@@ -20,6 +21,14 @@ public class Person {
         this.pesel = pesel;
         this.phone = phone;
         this.email = email;
+    }
+
+    public Person(String id, String firstame, String lastname, String className)
+    {
+        this.id = id;
+        this.firstname = firstame;
+        this.lastname = lastname;
+        this.className = className;
     }
 
     public String getId() {
@@ -40,6 +49,10 @@ public class Person {
 
     public int getClassOrClassrooms() {
         return classOrClassroom;
+    }
+
+    public String getClassName(){
+        return className;
     }
 
     public String getPesel() {

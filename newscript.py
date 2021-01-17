@@ -38,9 +38,9 @@ def legitymacja_generator(i):
     return nrLegitymacji
 try:
     connection = mysql.connector.connect(host='localhost',
-                                         database='dziennik',
+                                         database='dziennik2',
                                          user='admin',
-                                         password='123')
+                                         password='admin')
     cursor = connection.cursor()
     liczbaAdresow=100
     liczbaNauczycieli=30
@@ -304,7 +304,7 @@ try:
         opiekun=opiekun+1
     ocena=0
     while(ocena<liczbaOcen):
-        nrLegitymacjiUcznia=legitymacja_generator(random.randint(0,liczbaUczniow))
+        nrLegitymacjiUcznia=legitymacja_generator(random.randint(0,liczbaUczniow-1))
         TeacherID=random.randint(1,liczbaNauczycieli)
         SubjectID=random.randint(1,liczbaPrzedmiotow)
         today = date.today()
@@ -327,7 +327,7 @@ try:
     #uwagi
     uwaga=0
     while(uwaga<liczbaUwag):
-        nrLegitymacjiUcznia=legitymacja_generator(random.randint(0,liczbaUczniow))
+        nrLegitymacjiUcznia=legitymacja_generator(random.randint(0,liczbaUczniow-1))
         TeacherID=random.randint(1,liczbaNauczycieli)
         points=random.randint(-10,-1)
         Comment=""
