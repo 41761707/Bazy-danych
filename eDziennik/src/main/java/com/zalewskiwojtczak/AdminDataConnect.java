@@ -16,17 +16,16 @@ public class AdminDataConnect extends DataConnect {
     public AdminDataConnect(String loginA, String passwordA, String userlogin, String userpassword) throws Exception {
         conn = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/dziennik2?noAccessToProcedureBodies=true",
-                "admin", "admin");
+                loginA, passwordA);
 
-        this.userLogin=userlogin;
-        this.userPassword=userpassword;;
+        this.userLogin= userlogin;
+        this.userPassword = userpassword;
         CallableStatement cs = (CallableStatement) conn.prepareCall("{CALL user_detail(?,?,?)}");
         cs.setString(1, userLogin);
         cs.setString(2, userPassword);
         cs.registerOutParameter(3, java.sql.Types.VARCHAR);
         cs.executeUpdate();
         String resultado = cs.getString(3);
-        System.out.println(resultado);
         if(resultado == null || !resultado.equals("Administrator"))
         {
             connection=false;
@@ -93,4 +92,143 @@ public class AdminDataConnect extends DataConnect {
         }
         return people;
     }
+
+    public void createUser(String[] args) throws Exception{
+        for (int i = 0; i < args.length; i++){
+            if (i != 5 && args[i].length() == 0){
+                throw new Exception();
+            }
+        }
+        try{
+            if (args[0].equals("Uczeń") || args[0].equals("Nauczyciel")){
+                if (args[5].length() == 0){
+                    throw new Exception();
+                }
+                if (args[0].equals("Uczeń")){
+                    stmnt = conn.prepareCall("{CALL dodaj_ucznia(?,?,?,?,?,?,?,?,?,?)}");
+                }
+                else{
+                    stmnt = conn.prepareCall("{CALL dodaj_nauczyciela(?,?,?,?,?,?,?,?,?,?)}");
+                }
+
+                stmnt.setString(1, args[1]);
+                stmnt.setString(2, args[2]);
+                stmnt.setString(3, args[3]);
+                stmnt.setInt(4, Integer.parseInt(args[4]));
+                stmnt.setInt(5, Integer.parseInt(args[5]));
+                stmnt.setString(6, args[6]);
+                stmnt.setString(7, args[7]);
+                stmnt.setString(8, args[8]);
+                stmnt.setString(9, args[9]);
+                stmnt.setString(10, args[10]);
+                stmnt.executeUpdate();
+                if (args[0].equals("Uczeń")){
+                    stmnt = conn.prepareCall("{CALL create_behaviour(?)}");
+                    stmnt.setString(1, args[1]);
+                    stmnt.executeUpdate();
+                }
+            }
+            else if (args[0].equals("Opiekun") || args[0].equals("Admin")){
+                if (args[0].equals("Opiekun")){
+                    stmnt = conn.prepareCall("{CALL dodaj_opiekuna(?,?,?,?,?,?,?,?)}");
+                }
+                else{
+                    stmnt = conn.prepareCall("{CALL dodaj_administratora(?,?,?,?,?,?,?,?)}");
+                }
+                //stmnt.setString(1, args[1]);
+                stmnt.setString(1, args[2]);
+                stmnt.setString(2, args[3]);
+                stmnt.setInt(3, Integer.parseInt(args[4]));
+                stmnt.setString(4, args[6]);
+                stmnt.setString(5, args[7]);
+                stmnt.setString(6, args[8]);
+                stmnt.setString(7, args[9]);
+                stmnt.setString(8, args[10]);
+                stmnt.executeUpdate();
+            }
+            else
+                throw new Exception();
+        } catch (Exception ex){
+            ex.printStackTrace();
+            throw new Exception();
+        }
+    }
+
+    public void editUser(String type, String currentID, String id, String firstname, String lastname, String address,
+                         String class_, String pesel, String phone, String mail) throws Exception{
+        try {
+            if (type.equals("Uczeń") || type.equals("Nauczyciel")) {
+                if (type.equals("Uczeń")){
+                    stmnt = conn.prepareCall("{CALL edit_student(?,?,?,?,?,?,?,?,?)}");
+                }
+                else{
+                    stmnt = conn.prepareCall("{CALL edit_teacher(?,?,?,?,?,?,?,?,?)}");
+                }
+                stmnt.setString(1, currentID);
+                stmnt.setString(2, id);
+                stmnt.setString(3, firstname);
+                stmnt.setString(4, lastname);
+                stmnt.setInt(5, Integer.parseInt(address));
+                stmnt.setInt(6, Integer.parseInt(class_));
+                stmnt.setString(7, pesel);
+                stmnt.setString(8, phone);
+                stmnt.setString(9, mail);
+                stmnt.executeUpdate();
+            }
+            else{
+                if (type.equals("Opiekun")){
+                    stmnt = conn.prepareCall("{CALL edit_parent(?,?,?,?,?,?,?,?)}");
+                }
+                else{
+                    stmnt = conn.prepareCall("{CALL edit_admin(?,?,?,?,?,?,?,?)}");
+                }
+                stmnt.setString(1, currentID);
+                stmnt.setString(2, id);
+                stmnt.setString(3, firstname);
+                stmnt.setString(4, lastname);
+                stmnt.setInt(5, Integer.parseInt(address));
+                stmnt.setString(6, pesel);
+                stmnt.setString(7, phone);
+                stmnt.setString(8, mail);
+                stmnt.executeUpdate();
+            }
+        } catch (Exception ex){
+            throw new Exception();
+        } finally {
+            try {
+                stmnt.close();
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void removeUser(String type, String id){
+        try{
+            if (type.equals("Uczeń")){
+                stmnt = conn.prepareCall("{CALL remove_student(?)}");
+            }
+            else if (type.equals("Nauczyciel")){
+                stmnt = conn.prepareCall("{CALL remove_teacher(?)}");
+            }
+            else if (type.equals("Opiekun")){
+                stmnt = conn.prepareCall("{CALL remove_parent(?)}");
+            }
+            else{
+                stmnt = conn.prepareCall("{CALL remove_admin(?)}");
+            }
+            stmnt.setString(1, id);
+            stmnt.executeUpdate();
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        } finally {
+            try{
+                stmnt.close();
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
 }
+

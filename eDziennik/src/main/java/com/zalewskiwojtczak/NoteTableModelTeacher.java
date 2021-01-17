@@ -2,9 +2,9 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class TeacherViewNoteTableModel extends myAbstractTableModel {
+public class NoteTableModelTeacher extends myAbstractTableModel {
 
-	public TeacherViewNoteTableModel(List<TeacherViewNote> notes){
+    public NoteTableModelTeacher(List<Note> notes){
         String[] noteColumns =  { "Punkty","Legitymacja","Imię","Nazwisko","Klasa","Komentarz"};
         columnNames = noteColumns;
         objects = notes;
@@ -12,18 +12,18 @@ public class TeacherViewNoteTableModel extends myAbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        TeacherViewNote tempNote = (TeacherViewNote) objects.get(row);
+        Note tempNote = (Note) objects.get(row);
         switch (col) {
             case 0:
                 return tempNote.getPoints();
             case 1:
-            	return tempNote.getLegitymacja();
+                return tempNote.getId();
             case 2:
-                return tempNote.getStudentName();
+                return tempNote.getFirstName();
             case 3:
-                return tempNote.getStudentSurname();
+                return tempNote.getLastName();
             case 4:
-            	return tempNote.getClassName();
+                return tempNote.getClassName();
             case 5:
                 return tempNote.getComment();
             default:

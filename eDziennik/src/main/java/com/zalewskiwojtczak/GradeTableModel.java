@@ -18,9 +18,9 @@ public class GradeTableModel extends myAbstractTableModel {
             case 0:
                 return tempGrade.getNote();
             case 1:
-                return tempGrade.getTeacherName();
+                return tempGrade.getLastName();
             case 2:
-                return tempGrade.getTeacherSurname();
+                return tempGrade.getFirstName();
             case 3:
                 return tempGrade.getSubject();
             case 4:

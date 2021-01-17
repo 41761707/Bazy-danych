@@ -2,9 +2,9 @@ package com.zalewskiwojtczak;
 
 import java.util.List;
 
-public class ParentViewGradeModel extends myAbstractTableModel{
+public class GradeTableModelParent extends myAbstractTableModel{
 
-	public ParentViewGradeModel(List<ParentViewGrade> grades){
+    public GradeTableModelParent(List<Grade> grades){
         String[] gradeColumns =  { "Imie dziecka","Nazwisko dziecka","Ocena","Imie Nauczyciela", "Nazwisko Nauczyciela","Przedmiot", "Data", "Komentarz"};
         columnNames = gradeColumns;
         objects = grades;
@@ -12,22 +12,22 @@ public class ParentViewGradeModel extends myAbstractTableModel{
 
     @Override
     public Object getValueAt(int row, int col) {
-        ParentViewGrade tempGrade = (ParentViewGrade) objects.get(row);
+        Grade tempGrade = (Grade) objects.get(row);
         switch (col) {
-        	case 0:
-        		return tempGrade.getStudentName();
-        	case 1:
-        		return tempGrade.getStudentSurname();
+            case 0:
+                return tempGrade.getFirstName2();
+            case 1:
+                return tempGrade.getLastName2();
             case 2:
                 return tempGrade.getNote();
             case 3:
-                return tempGrade.getTeacherName();
+                return tempGrade.getFirstName();
             case 4:
-                return tempGrade.getTeacherSurname();
+                return tempGrade.getLastName();
             case 5:
                 return tempGrade.getSubject();
             case 6:
-            	return tempGrade.getDate();
+                return tempGrade.getDate();
             case 7:
                 return tempGrade.getComment();
             default:
